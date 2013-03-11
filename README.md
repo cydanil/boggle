@@ -26,9 +26,6 @@ currently in use and remove them whenever I backtrace.
 Once I have generated all the words from the board, I use the prefix
 tree to find and return the existing words.
 
-Here is an example:
-http://www.shiftout.net/~cydanil/cs2011/sample.html
-http://www.shiftout.net/~cydanil/cs2011/bogglesample.dot
 
 The english alphabet is constitued of 26 letters.
 Given that alphabet, each vertex might have up to 26 childs, which in
