@@ -54,3 +54,7 @@ dictionary : a set of word from the dictionary file fitting the criterias.
 parents : this set contains prefixes of the dictionary words, which is
           how I represent my graph.
 output : a list containing the words found, each entry is unique.
+
+The `words_alpha.txt` comes from https://github.com/dwyl/english-words
+Dice were compiled from the English listing found here:
+https://boardgames.stackexchange.com/questions/29264/boggle-what-is-the-dice-configuration-for-boggle-in-various-languages
