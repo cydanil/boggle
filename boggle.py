@@ -44,46 +44,36 @@ output : a list containing the words found, each entry is unique.
 import random
 import re
 
-dice = []
 
 with open('dice.txt', 'r') as fin:
-    dice = [l.strip() for l in fin.readlines()]
-print(dice)
+    dice = fin.read().splitlines()
 
 
 # Create and return a board in form of five strings in an array.
-# You can set you own data by commenting line 97 to 106
-# and putting 5 strings of length 5 into the board array.
-
 board = []
 for line in range(5):
     board.append('')
     for column in range(5):
         die = random.choice(dice)
         dice.remove(die)
-        board[line] += random.choice(die)
-
-for element in board:
-    print(element)
-
+        board[line] += random.choice(die).lower()
+    print(board[line])
 
 # Create an alphabet from the board.
 alphabet = ''.join(set(''.join(board)))
-print(alphabet)
+print(f'\nAlphabet: {alphabet}\n')
 
 # Create the criteria we'll be looking for in the dictionary
-criterias = re.compile('[' + alphabet + ']{3,}$', re.IGNORECASE)
+criteria = re.compile('[' + alphabet + ']{3,}$', re.IGNORECASE)
 
 # Create a dictionary from the dictionary file.
 # All imported words match the alphabet.
-dictionary = set(word
-                 for word in open('words_alpha.txt').read().splitlines()
-                 if criterias.match(word))
+with open('words_alpha.txt', 'r') as fin:
+    words = fin.read().splitlines()
+dictionary = set(word for word in words if criteria.match(word))
 
-# Create a set of parents in an array, which is how the trie is stored
-parents = set(word[:i] for word in dictionary for i in range(2, len(word)+1))
-
-output = []
+# Create a set of parents, which is how the trie is stored
+trie = set(word[:i] for word in dictionary for i in range(2, len(word)+1))
 
 
 def solve():
@@ -91,32 +81,35 @@ def solve():
 
     First get the next string in the array (coordinate y)
     and then the next letter in the string (coordinate x).
+
+    To analyse the routes taken by the algorithm, make use of  `route` in the
+    innermost for loop.
     """
+    ret = set()
     for y, line in enumerate(board):
         for x, column in enumerate(line):
-            for valid_word, route in trie(column, ([y, x],)):
-                print(valid_word, route)
+            for word, route in trie_traversal(column, ([y, x],)):
+                ret.add(word)
+
+    return ret
 
 
-def trie(word, route):
+def trie_traversal(word, route):
     """Look up the prefix tree.
 
     If the word given as argument is in the dictionary, return it.
     In any case, try to add the next letter to see if it fits as well.
     If is does not, abandon this way and go check the next vertex.
-
-    If you desire to analyse the routes taken by the algorithm,
-    replace the yield statement with:
-        yield(word, route)
     """
     if word in dictionary:
-        yield(word, route)
+        yield word, route
     for(column, row) in vertices_in_range(*route[-1]):
         if(column, row) not in route:
             prefix2 = word + board[column][row]
-            if prefix2 in parents:
-                for valid_word in trie(prefix2, route + ([column, row], )):
-                    output.append(valid_word)
+            if prefix2 in trie:
+                for valid_word in trie_traversal(prefix2,
+                                                 route + ([column, row],)):
+                    yield valid_word
 
 
 def vertices_in_range(c, r):
@@ -130,11 +123,7 @@ def vertices_in_range(c, r):
             yield (column, row)
 
 
-if __name__ == '__main__':
-    solve()
-
-    output = list(set(output))
-    for element in output:
-        print(element)
-
-    print(len(output))
+output = solve()
+for element in output:
+    print(element)
+print(len(output))

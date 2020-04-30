@@ -1,5 +1,4 @@
-boggle
-======
+# boggle
 
 A boggle game solver
 
@@ -13,19 +12,15 @@ This is a two step program:
     - Build all string from the boggle board.
     - Return any string that fits in the trie.
 
+There might be as much as 15 septillion words (ie. 25 factorial).
 
-I chose to work with python because it is light & flexible.
-When considering such a program, where I potentially have to deal with
-15 septillion words (ie. 25 factorial), I want it to be fast.
+The board is navigated using depth-first via a recursive fuction, but
+without being constrained from reusing a given vertex in a word.
+In order to avoid that, there is a stack on which the letters currently in use
+are stored, and popped when backtracking.
 
-To go through the board, I use depth first via a recursive fuction, but
-that does not prevent me from reusing a given vertex in a word.
-In order to avoid that, I implemented a stack on which I put the letter
-currently in use and remove them whenever I backtrace.
-
-Once I have generated all the words from the board, I use the prefix
-tree to find and return the existing words.
-
+Once all words are generated, use the prefix tree to find and return valid
+words.
 
 The english alphabet is constitued of 26 letters.
 Given that alphabet, each vertex might have up to 26 childs, which in
@@ -36,12 +31,8 @@ Therefore, the order of complexity is:
     - in time, O(AL), which stands for the size A of the alphabet
       multiplied by the length L of the generated string.
 
-To optimize the need of time, but space mainly. I chose to create a
-regular expression object which imports only the word containing the
-letters from an alphabet created with the board letters.
-
-I however haven't implemented a proper graph structure, but instead use
-a combination of sets and stacks.
+To optimize time and space, a regular expression imports only the word
+containing the letters from an alphabet created with the board letters.
 
 dice : this is a simple array containing strings from the dice.txt file
 board : this array contains five strings made of random characers from
@@ -56,5 +47,6 @@ parents : this set contains prefixes of the dictionary words, which is
 output : a list containing the words found, each entry is unique.
 
 The `words_alpha.txt` comes from https://github.com/dwyl/english-words
+
 Dice were compiled from the English listing found here:
 https://boardgames.stackexchange.com/questions/29264/boggle-what-is-the-dice-configuration-for-boggle-in-various-languages
